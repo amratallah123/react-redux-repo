@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import { useEffect, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 function App() {
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+  const CounterOperation = useCallback(
+    (type, factor) => {
+      const action = {
+        type: type,
+        factor: factor,
+      };
+      dispatch(action);
+    },
+    [dispatch]
+  );
+  const handleToggleState = () => {
+    dispatch({
+      type: "HANDLETOGGLESTATE",
+    });
+  };
+  useEffect(
+    () => () => () => CounterOperation("INCREASE", 4),
+    [CounterOperation]
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={handleToggleState}>Toggle State</button>
+      {state.showCounter && (
+        <>
+          <div className="counter">Counter: {state.counter} </div>
+          <div>
+            <button
+              className="btn"
+              onClick={() => CounterOperation("INCREASE", 5)}
+            >
+              increase
+            </button>
+            <button
+              className="btn"
+              onClick={() => CounterOperation("DECREASE", 5)}
+            >
+              decrease
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
